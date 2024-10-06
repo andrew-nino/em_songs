@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS groups (
-    id         INTEGER        PRIMARY KEY AUTOINCREMENT,
+    id         serial         PRIMARY KEY,
     name       VARCHAR(255)   NOT NULL,
     members    VARCHAR(100)[] NOT NULL,
     founded    VARCHAR(255)   NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS groups (
 );
 
 CREATE TABLE IF NOT EXISTS songs (
-    id          INTEGER      PRIMARY KEY AUTOINCREMENT,
+    id          serial       PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     text        TEXT         NOT NULL,
     album       VARCHAR(255) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS songs (
 );
 
 CREATE TABLE IF NOT EXISTS group_song (
-    id         INTEGER      PRIMARY KEY AUTOINCREMENT,
+    id         serial       PRIMARY KEY,
     group_id   INTEGER      NOT NULL,
     song_id    INTEGER      NOT NULL,
 

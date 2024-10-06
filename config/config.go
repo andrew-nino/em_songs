@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"os"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -29,12 +30,14 @@ type (
 	}
 
 	PG struct {
-		Host     string `env-required:"true" env:"POSTGRES_HOST"`
-		Port     string `env-required:"true" env:"POSTGRES_PORT"`
-		Username string `env-required:"true" env:"POSTGRES_USER"`
-		Password string `env-required:"true" env:"POSTGRES_PASSWORD"`
-		DBName   string `env-required:"true" env:"POSTGRES_DB"`
-		SSLMode  string `env:"POSTGRES_SSL" env-default:"disable"`
+		Host         string        `env-required:"true" env:"POSTGRES_HOST"`
+		Port         string        `env-required:"true" env:"POSTGRES_PORT"`
+		Username     string        `env-required:"true" env:"POSTGRES_USER"`
+		Password     string        `env-required:"true" env:"POSTGRES_PASSWORD"`
+		DBName       string        `env-required:"true" env:"POSTGRES_DB"`
+		SSLMode      string        `env:"POSTGRES_SSL" env-default:"disable"`
+		ConnAttempts int           `env:"CONN_ATTEMPTS" default:"10"`
+		ConnTimeout  time.Duration `env:"CONN_TIMEOUT" default:"1s"`
 	}
 )
 
