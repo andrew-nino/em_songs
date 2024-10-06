@@ -10,5 +10,9 @@ func main() {
 
 	cfg := config.NewConfig()
 
+	log := SetLogrus(cfg.Log.Level)
+
+	log.Out.Write([]byte{65,66,'\n'})
+
 	fmt.Println(cfg)
 }
