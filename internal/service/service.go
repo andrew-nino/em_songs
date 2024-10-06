@@ -1,23 +1,24 @@
 package service
 
-import "github.com/sirupsen/logrus"
+import (
+	"context"
 
-type GroupsRepo interface {
-}
+	"github.com/andrew-nino/em_songs/internal/models"
+	"github.com/sirupsen/logrus"
+)
 
 type SongsRepo interface {
+	AddSongToRepository(context.Context, models.GroupDBModel, models.SongDBModel) (int, error)
 }
 
 type ApplicationServices struct {
-	log    *logrus.Logger
-	groups GroupsRepo
-	songs  SongsRepo
+	log   *logrus.Logger
+	songs SongsRepo
 }
 
-func New(log *logrus.Logger, groups GroupsRepo, songs SongsRepo) *ApplicationServices {
+func New(log *logrus.Logger, songs SongsRepo) *ApplicationServices {
 	return &ApplicationServices{
-		log:    log,
-		groups: groups,
-		songs:  songs,
+		log:   log,
+		songs: songs,
 	}
 }

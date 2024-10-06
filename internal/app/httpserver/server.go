@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/andrew-nino/em_songs/config"
 	v1 "github.com/andrew-nino/em_songs/internal/controller/http/v1"
 	"github.com/andrew-nino/em_songs/internal/service"
 	"github.com/sirupsen/logrus"
@@ -17,9 +18,9 @@ type Server struct {
 	port       string
 }
 
-func New(log *logrus.Logger, port string, services *service.ApplicationServices) *Server {
+func New(log *logrus.Logger, port string, services *service.ApplicationServices, cfg config.HTTP) *Server {
 
-	handler := v1.NewHandler(log, services, services)
+	handler := v1.NewHandler(log, services, cfg)
 
 	httpServer := &http.Server{
 		Addr:           ":" + port,

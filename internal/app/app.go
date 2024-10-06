@@ -14,9 +14,9 @@ type App struct {
 
 func NewApplication(log *logrus.Logger, port string, cfg *config.Config) *App {
 
-	repository := postgres.New(log, &cfg.PG)
-	services := service.New(log, repository, repository)
-	server := httpserver.New(log, port, services)
+	repository := postgres.New(log, cfg.PG)
+	services := service.New(log, repository)
+	server := httpserver.New(log, port, services, cfg.HTTP)
 
 	return &App{
 		HTTPServer: server,

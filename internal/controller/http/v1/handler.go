@@ -1,27 +1,29 @@
 package v1
 
 import (
+	"context"
+
+	"github.com/andrew-nino/em_songs/config"
+	"github.com/andrew-nino/em_songs/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-type GroupService interface {
-}
-
-type SongsService interface {
+type SongService interface {
+	AddSong(context.Context, models.SongRequest, []byte) (int, error)
 }
 
 type Handler struct {
-	log    *logrus.Logger
-	groups GroupService
-	songs  SongsService
+	log      *logrus.Logger
+	confHTTP config.HTTP
+	service  SongService
 }
 
-func NewHandler(log *logrus.Logger, groups GroupService, songs SongsService) *Handler {
+func NewHandler(log *logrus.Logger, service SongService, cfg config.HTTP) *Handler {
 	return &Handler{
-		log:    log,
-		groups: groups,
-		songs:  songs,
+		log:      log,
+		confHTTP: cfg,
+		service:  service,
 	}
 }
 
@@ -29,9 +31,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	router := gin.New()
 
-	_ = router.Group("/info")
+	songs := router.Group("/songs")
 	{
-		// auth.POST("/add", h.addClient)
+		songs.POST("/add", h.addSong)
 		// auth.PUT("/update", h.updateClient)
 		// auth.GET("/get/:id", h.getClient)
 		// auth.DELETE("/delete/:id", h.deleteClient)

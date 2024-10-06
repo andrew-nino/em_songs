@@ -23,6 +23,14 @@ type (
 
 	HTTP struct {
 		Port string `env:"HTTP_PORT" env-default:"8080"`
+		ExternalService
+	}
+
+	ExternalService struct {
+		MaxIdleConns          int           `env:"HTTP_MAX_IDLE_CONNECTIONS" env-default:"4"`
+		IdleConnTimeout       time.Duration `env:"HTTP_IDLE_CONNECTION_TIMEOUT" env-default:"30s"`
+		ResponseHeaderTimeout time.Duration `env:"HTTP_RESPONSE_HEADER_TIMEOUT" env-default:"6s"`
+		ExternalURL           string        `env:"HTTP_EXTERNAL_URL" env-default:"http://example.com/info"`
 	}
 
 	Log struct {

@@ -10,7 +10,7 @@ import (
 )
 
 // Returns a new Migrate instance
-func NewMigration(c *config.PG) *go_migrate.Migrate {
+func NewMigration(c config.PG) *go_migrate.Migrate {
 	m, err := go_migrate.New(
 		"file://schema",
 		"postgres://"+c.Username+":"+c.Password+"@"+c.Host+":"+c.Port+"/"+c.DBName+"?sslmode="+c.SSLMode+"")

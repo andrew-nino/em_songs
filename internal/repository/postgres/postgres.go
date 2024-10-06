@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	groups_table = "groups"
-	songs_table = "songs"
+	groups_table     = "groups"
+	songs_table      = "songs"
 	group_song_table = "group_song"
 )
 
@@ -24,7 +24,7 @@ type Postgres struct {
 	db           *sqlx.DB
 }
 
-func New(log *logrus.Logger, cfg *config.PG) *Postgres {
+func New(log *logrus.Logger, cfg config.PG) *Postgres {
 
 	db, err := NewPostgresDB(cfg)
 	if err != nil {
@@ -53,7 +53,7 @@ func New(log *logrus.Logger, cfg *config.PG) *Postgres {
 
 // Causes the database to open and checks the connection. If the connection is established, returns a pointer to the database.
 // Returns an error if the database has not opened or there is no connection.
-func NewPostgresDB(cfg *config.PG) (*sqlx.DB, error) {
+func NewPostgresDB(cfg config.PG) (*sqlx.DB, error) {
 
 	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))

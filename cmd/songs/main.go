@@ -29,5 +29,5 @@ func main() {
 
 	application.HTTPServer.Shutdown(context.Background())
 
-	log.Print("App " + cfg.App.Name +  " stopped")
+	log.Print("App " + cfg.App.Name + " stopped")
 }

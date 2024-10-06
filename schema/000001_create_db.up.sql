@@ -1,18 +1,16 @@
 CREATE TABLE IF NOT EXISTS groups (
     id         serial         PRIMARY KEY,
-    name       VARCHAR(255)   NOT NULL,
+    name       VARCHAR(100)   NOT NULL,
     members    VARCHAR(100)[] NOT NULL,
-    founded    VARCHAR(255)   NOT NULL,
     created_at TIMESTAMP      DEFAULT now(),
     updated_at TIMESTAMP      DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS songs (
     id          serial       PRIMARY KEY,
-    name        VARCHAR(255) NOT NULL,
+    name        VARCHAR(100) NOT NULL,
     text        TEXT         NOT NULL,
-    album       VARCHAR(255) NOT NULL,
-    released_at VARCHAR(255) NOT NULL,
+    released_at VARCHAR(100) NOT NULL,
     link        VARCHAR(255) NOT NULL,
     created_at  TIMESTAMP    DEFAULT now(),
     updated_at  TIMESTAMP    DEFAULT now()
