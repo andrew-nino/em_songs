@@ -1,7 +1,9 @@
 package v1
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 
@@ -13,26 +15,31 @@ import (
 )
 
 func (h *Handler) addSong(c *gin.Context) {
-	ctx := c.Request.Context()
-	request := models.SongRequest{}
 
-	err := bindAndValidate(c, &request)
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		h.log.Error("Error reading request body")
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})
+	}
+
+	requestModel := models.SongRequest{}
+	err = bindAndValidateRequest(body, &requestModel)
 	if err != nil {
 		h.log.Error("failed to bind JSON: ", err)
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})
 		return
 	}
 
-	rawAnswer, err := getSong(ctx, c, h.confHTTP)
+	ctx := c.Request.Context()
+	rawAnswer, err := getSongFromExternal(ctx, h.configHTTP, body)
 	if err != nil {
 		h.log.Error("failed to get song from external service: ", err)
 		c.JSON(http.StatusFailedDependency, gin.H{"message": "failed to get song from external service"})
 		return
 	}
 
-	id, err := h.service.AddSong(ctx, request, rawAnswer)
+	id, err := h.service.AddSong(ctx, requestModel, rawAnswer)
 	if err != nil {
-		h.log.Error("failed to add song to db: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to add song to db"})
 		return
 	}
@@ -40,9 +47,9 @@ func (h *Handler) addSong(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
-func bindAndValidate(c *gin.Context, request *models.SongRequest) error {
+func bindAndValidateRequest(body []byte, request *models.SongRequest) error {
 
-	if err := c.BindJSON(request); err != nil {
+	if err := json.Unmarshal(body, request); err != nil {
 		return err
 	}
 
@@ -55,17 +62,7 @@ func bindAndValidate(c *gin.Context, request *models.SongRequest) error {
 	return nil
 }
 
-func getSong(ctx context.Context, c *gin.Context, cfg config.HTTP) ([]byte, error) {
-
-	body := c.Request.Body
-	defer body.Close()
-
-	rawAnswer, err := getSongFromExternal(ctx, cfg, body)
-
-	return rawAnswer, err
-}
-
-func getSongFromExternal(ctx context.Context, cfg config.HTTP, requestBody io.ReadCloser) ([]byte, error) {
+func getSongFromExternal(ctx context.Context, cfg config.HTTP, requestBody []byte) ([]byte, error) {
 
 	// TODO: добавить retry
 	tr := &http.Transport{
@@ -76,7 +73,7 @@ func getSongFromExternal(ctx context.Context, cfg config.HTTP, requestBody io.Re
 
 	client := &http.Client{Transport: tr}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cfg.ExternalURL, requestBody)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cfg.ExternalURL, bytes.NewReader(requestBody))
 	if err != nil {
 		return nil, err
 	}

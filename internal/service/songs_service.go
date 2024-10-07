@@ -9,14 +9,15 @@ import (
 
 func (s *ApplicationServices) AddSong(ctx context.Context, songRequest models.SongRequest, rawAnswer []byte) (int, error) {
 
-	requestModel, err := processRawAnswer(ctx, rawAnswer)
+	var songDetail models.SongDetail
+	err := processRawAnswer(&songDetail, rawAnswer)
 	if err != nil {
 		s.log.WithError(err).Error("Failed to process raw answer")
 		return 0, err
 	}
 
 	groupDBModel := models.NewGroupDBModel(songRequest.Group, nil)
-	songModel := models.NewSongDBModel(songRequest.Song, requestModel)
+	songModel := models.NewSongDBModel(songRequest.Song, songDetail)
 
 	id, err := s.songs.AddSongToRepository(ctx, *groupDBModel, *songModel)
 	if err != nil {
@@ -26,30 +27,12 @@ func (s *ApplicationServices) AddSong(ctx context.Context, songRequest models.So
 
 	return id, nil
 }
-func processRawAnswer(ctx context.Context, body []byte) (models.SongDetail, error) {
 
-	var songDetail models.SongDetail
+func processRawAnswer(songDetail *models.SongDetail, body []byte) error {
 
-	done := make(chan error, 1)
-
-	go func() {
-		defer close(done)
-
-		err := json.Unmarshal(body, &songDetail)
-		if err != nil {
-			done <- err
-			return
-		}
-		done <- err
-	}()
-
-	select {
-	case err := <-done:
-		if err != nil {
-			return models.SongDetail{}, err
-		}
-		return songDetail, nil
-	case <-ctx.Done():
-		return models.SongDetail{}, ctx.Err()
+	err := json.Unmarshal(body, &songDetail)
+	if err != nil {
+		return err
 	}
+	return nil
 }

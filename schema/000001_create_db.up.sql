@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS groups (
     id         serial         PRIMARY KEY,
-    name       VARCHAR(100)   NOT NULL,
-    members    VARCHAR(100)[] NOT NULL,
-    created_at TIMESTAMP      DEFAULT now(),
-    updated_at TIMESTAMP      DEFAULT now()
+    name       VARCHAR(100)   UNIQUE NOT NULL,
+    members    VARCHAR(100)[],
+    created_at TIMESTAMP             DEFAULT now(),
+    updated_at TIMESTAMP             DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS songs (

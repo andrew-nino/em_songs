@@ -14,16 +14,16 @@ type SongService interface {
 }
 
 type Handler struct {
-	log      *logrus.Logger
-	confHTTP config.HTTP
-	service  SongService
+	log        *logrus.Logger
+	configHTTP config.HTTP
+	service    SongService
 }
 
 func NewHandler(log *logrus.Logger, service SongService, cfg config.HTTP) *Handler {
 	return &Handler{
-		log:      log,
-		confHTTP: cfg,
-		service:  service,
+		log:        log,
+		configHTTP: cfg,
+		service:    service,
 	}
 }
 
