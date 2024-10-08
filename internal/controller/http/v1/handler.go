@@ -9,9 +9,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	groupName = "group"
+	songName  = "song"
+)
+
 type SongService interface {
 	AddSong(context.Context, models.SongRequest, []byte) (int, error)
 	DeleteSong(context.Context, int) error
+	UpdateSong(context.Context, models.SongUpdate) error
 }
 
 type Handler struct {
@@ -35,7 +41,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	songs := router.Group("/songs")
 	{
 		songs.POST("/add", h.addSong)
-		// auth.PUT("/update", h.updateClient)
+		songs.PUT("/update", h.updateSong)
 		// auth.GET("/get/:id", h.getClient)
 		songs.DELETE("/delete/:id", h.deleteSong)
 		// auth.GET("/statistic", h.getStatistic)

@@ -54,6 +54,25 @@ func (p *Postgres) AddSongToRepository(ctx context.Context, group models.GroupDB
 	return id_song, tx.Commit()
 }
 
+func (p *Postgres) UpdateSongToRepository(ctx context.Context, songUpdate models.SongDBModel) error {
+
+	var id_song int64
+
+	tx, err := p.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	insertSongQuery := fmt.Sprintf("UPDATE %s SET name=$1, text=$2, released_at=$3, link=$4, updated_at=now() WHERE id = $5 RETURNING id", songs_table)
+	rowSong := tx.QueryRowContext(ctx, insertSongQuery, songUpdate.Name, songUpdate.Text, songUpdate.ReleasedAt, songUpdate.Link, songUpdate.ID)
+	if err = rowSong.Scan(&id_song); err != nil && id_song != songUpdate.ID {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
 func (p *Postgres) DeleteSongFromRepository(ctx context.Context, id int) error {
 
 	deleteQuery := fmt.Sprintf("DELETE FROM %s WHERE id = $1", songs_table)

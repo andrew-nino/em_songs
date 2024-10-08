@@ -19,7 +19,7 @@ func (s *ApplicationServices) AddSong(ctx context.Context, songRequest models.So
 	groupDBModel := models.NewGroupDBModel(songRequest.Group, nil)
 	songModel := models.NewSongDBModel(songRequest.Song, songDetail)
 
-	id, err := s.songs.AddSongToRepository(ctx, *groupDBModel, *songModel)
+	id, err := s.repository.AddSongToRepository(ctx, *groupDBModel, *songModel)
 	if err != nil {
 		s.log.WithError(err).Error("failed to add song to repository")
 		return 0, err
@@ -36,12 +36,24 @@ func processRawAnswer(songDetail *models.SongDetail, body []byte) error {
 	return nil
 }
 
+func (s ApplicationServices) UpdateSong(ctx context.Context, updateSong models.SongUpdate) error {
+
+	songModel := models.NewSongDBModel(updateSong.Name, updateSong)
+
+	err := s.repository.UpdateSongToRepository(ctx, *songModel)
+	if err != nil {
+		s.log.WithError(err).Error("failed to update song in repository")
+		return err
+	}
+	return nil
+}
+
 func (s *ApplicationServices) DeleteSong(ctx context.Context, id int) error {
 
-	err := s.songs.DeleteSongFromRepository(ctx, id)
-	if err!= nil {
-        s.log.WithError(err).Error("failed to delete song from repository")
-        return err
-    }
+	err := s.repository.DeleteSongFromRepository(ctx, id)
+	if err != nil {
+		s.log.WithError(err).Error("failed to delete song from repository")
+		return err
+	}
 	return nil
 }

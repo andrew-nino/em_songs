@@ -9,17 +9,18 @@ import (
 
 type SongsRepo interface {
 	AddSongToRepository(context.Context, models.GroupDBModel, models.SongDBModel) (int, error)
+	UpdateSongToRepository(context.Context, models.SongDBModel) error
 	DeleteSongFromRepository(context.Context, int) error
 }
 
 type ApplicationServices struct {
-	log   *logrus.Logger
-	songs SongsRepo
+	log        *logrus.Logger
+	repository SongsRepo
 }
 
 func New(log *logrus.Logger, songs SongsRepo) *ApplicationServices {
 	return &ApplicationServices{
-		log:   log,
-		songs: songs,
+		log:        log,
+		repository: songs,
 	}
 }
