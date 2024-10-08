@@ -14,6 +14,7 @@ func (p *Postgres) AddSongToRepository(ctx context.Context, group models.GroupDB
 	var id_song int
 	var operationID int
 
+	// Проверяем наличие группы в таблице
 	searchGroupQuery := fmt.Sprintf("SELECT id FROM %s WHERE name = $1", groups_table)
 	rowGroup := p.db.QueryRowContext(ctx, searchGroupQuery, group.Name)
 	err := rowGroup.Scan(&id_group)
@@ -45,10 +46,20 @@ func (p *Postgres) AddSongToRepository(ctx context.Context, group models.GroupDB
 
 	insertGroupSongQuery := fmt.Sprintf("INSERT INTO %s (group_id, song_id) VALUES ($1, $2) RETURNING id", group_song_table)
 	rowGroupSong := tx.QueryRowContext(ctx, insertGroupSongQuery, id_group, id_song)
-	if err = rowGroupSong.Scan(&operationID); err!= nil {
-        tx.Rollback()
-        return 0, err
-    }
+	if err = rowGroupSong.Scan(&operationID); err != nil {
+		tx.Rollback()
+		return 0, err
+	}
 
-	return operationID, tx.Commit()
+	return id_song, tx.Commit()
+}
+
+func (p *Postgres) DeleteSongFromRepository(ctx context.Context, id int) error {
+
+	deleteQuery := fmt.Sprintf("DELETE FROM %s WHERE id = $1", songs_table)
+	_, err := p.db.ExecContext(ctx, deleteQuery, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

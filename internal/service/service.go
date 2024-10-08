@@ -9,6 +9,7 @@ import (
 
 type SongsRepo interface {
 	AddSongToRepository(context.Context, models.GroupDBModel, models.SongDBModel) (int, error)
+	DeleteSongFromRepository(context.Context, int) error
 }
 
 type ApplicationServices struct {

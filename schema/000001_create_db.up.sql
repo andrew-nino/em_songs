@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS group_song (
     group_id   INTEGER      NOT NULL,
     song_id    INTEGER      NOT NULL,
 
-    FOREIGN KEY (group_id) REFERENCES groups (id) ON DELETE CASCADE,
+    FOREIGN KEY (group_id) REFERENCES groups (id),
     FOREIGN KEY (song_id)  REFERENCES songs  (id) ON DELETE CASCADE,
     UNIQUE (group_id, song_id)
 );

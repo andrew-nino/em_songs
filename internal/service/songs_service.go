@@ -12,7 +12,7 @@ func (s *ApplicationServices) AddSong(ctx context.Context, songRequest models.So
 	var songDetail models.SongDetail
 	err := processRawAnswer(&songDetail, rawAnswer)
 	if err != nil {
-		s.log.WithError(err).Error("Failed to process raw answer")
+		s.log.WithError(err).Error("failed to process raw answer")
 		return 0, err
 	}
 
@@ -21,10 +21,9 @@ func (s *ApplicationServices) AddSong(ctx context.Context, songRequest models.So
 
 	id, err := s.songs.AddSongToRepository(ctx, *groupDBModel, *songModel)
 	if err != nil {
-		s.log.WithError(err).Error("Failed to add song to repository")
+		s.log.WithError(err).Error("failed to add song to repository")
 		return 0, err
 	}
-
 	return id, nil
 }
 
@@ -34,5 +33,15 @@ func processRawAnswer(songDetail *models.SongDetail, body []byte) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (s *ApplicationServices) DeleteSong(ctx context.Context, id int) error {
+
+	err := s.songs.DeleteSongFromRepository(ctx, id)
+	if err!= nil {
+        s.log.WithError(err).Error("failed to delete song from repository")
+        return err
+    }
 	return nil
 }

@@ -11,6 +11,7 @@ import (
 
 type SongService interface {
 	AddSong(context.Context, models.SongRequest, []byte) (int, error)
+	DeleteSong(context.Context, int) error
 }
 
 type Handler struct {
@@ -36,7 +37,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		songs.POST("/add", h.addSong)
 		// auth.PUT("/update", h.updateClient)
 		// auth.GET("/get/:id", h.getClient)
-		// auth.DELETE("/delete/:id", h.deleteClient)
+		songs.DELETE("/delete/:id", h.deleteSong)
 		// auth.GET("/statistic", h.getStatistic)
 	}
 

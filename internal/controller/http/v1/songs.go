@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/andrew-nino/em_songs/config"
 	"github.com/andrew-nino/em_songs/internal/models"
@@ -91,4 +92,25 @@ func getSongFromExternal(ctx context.Context, cfg config.HTTP, requestBody []byt
 	}
 
 	return body, nil
+}
+
+func (h *Handler) deleteSong(c *gin.Context) {
+
+	ctx := c.Request.Context()
+	idStr := c.Param("id")
+
+	id, err := strconv.Atoi(idStr)
+	if err!= nil {
+        h.log.Error("invalid id: ", idStr)
+        c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid id"})
+        return
+    }
+
+	err = h.service.DeleteSong(ctx, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to delete song"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"successful deletion of id ": id})
 }
