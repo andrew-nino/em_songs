@@ -16,6 +16,7 @@ type SongsRepo interface {
 	AddSongToRepository(context.Context, models.GroupDBModel, models.SongDBModel) (int, error)
 	UpdateSongToRepository(context.Context, models.SongDBModel) error
 	GetSong(context.Context, models.VerseDBModel) (models.VerseDBModel, error)
+	GetAllSongs(context.Context, models.RequestSongsDBModel) ([]models.ResponceSongsDBModel, error)
 	DeleteSongFromRepository(context.Context, int) error
 }
 

@@ -5,8 +5,8 @@ type GroupDBModel struct {
 	Members []string `db:"members"`
 }
 
-func NewGroupDBModel(name string, members []string) *GroupDBModel {
-	return &GroupDBModel{
+func NewGroupDBModel(name string, members []string) GroupDBModel {
+	return GroupDBModel{
 		Name:    name,
 		Members: members,
 	}
@@ -20,8 +20,8 @@ type SongDBModel struct {
 	Link       string `db:"link"`
 }
 
-func NewSongDBModel(name string, mod modelsHTTP) *SongDBModel {
-	return &SongDBModel{
+func NewSongDBModel(name string, mod modelsHTTP) SongDBModel {
+	return SongDBModel{
 		ID:         mod.ID(),
 		Name:       name,
 		Text:       mod.Text(),
@@ -37,11 +37,35 @@ type VerseDBModel struct {
 	Text         string `db:"text"`
 }
 
-func NewVerseDBModel(req VerseRequest) *VerseDBModel {
-	return &VerseDBModel{
+func NewVerseDBModel(req VerseRequest) VerseDBModel {
+	return VerseDBModel{
 		ID:           req.ID,
 		NumberVerse:  req.RequestedVerse,
 		AmountVerses: 0,
 		Text:         "",
 	}
+}
+
+type RequestSongsDBModel struct {
+	Limit  int64  `db:"limit"`
+	Offset int64  `db:"offset"`
+	Group  string `db:"group"`
+	Song   string `db:"song"`
+}
+
+func NewSongsFilterDBModel(req RequestSongsFilter) RequestSongsDBModel {
+	return RequestSongsDBModel{
+		Limit:  req.Limit,
+		Offset: req.Offset,
+		Group:  req.Group,
+		Song:   req.Song,
+	}
+}
+
+type ResponceSongsDBModel struct {
+	ID          int64  `db:"id"`
+	Song        string `db:"song"`
+	Group       string `json:"group"`
+	ReleaseDate string `json:"releaseDate"`
+	Offset      int64  `json:"offset"`
 }

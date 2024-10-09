@@ -62,3 +62,37 @@ type VerseResponce struct {
 	NextVerse int64  `json:"nextVerse"`
 	Text      string `json:"text"`
 }
+
+type RequestSongsFilter struct {
+	Limit  int64  `json:"limit" validate:"required,gte=1"`
+	Offset int64  `json:"offset" validate:"required"`
+	Group  string `json:"group" validate:"lte=100"`
+	Song   string `json:"song" validate:"lte=100"`
+}
+
+func NewRequestSongFilter(limit, offset int64, group, song string) RequestSongsFilter {
+	return RequestSongsFilter{
+		Limit:  limit,
+		Offset: offset,
+		Group:  group,
+		Song:   song,
+	}
+}
+
+type ResponceSongs struct {
+	ID          int64  `json:"id"`
+	SongTitle   string `json:"songTitle"`
+	GroupName   string `json:"groupName"`
+	ReleaseDate string `json:"releaseDate"`
+	Offset      int64  `json:"offset"`
+}
+
+func NewResponceSongs(resp ResponceSongsDBModel) ResponceSongs {
+	return ResponceSongs{
+		ID:          resp.ID,
+		SongTitle:   resp.Song,
+		GroupName:   resp.Group,
+		ReleaseDate: resp.ReleaseDate,
+		Offset:      resp.Offset,
+	}
+}

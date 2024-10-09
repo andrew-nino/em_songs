@@ -18,6 +18,7 @@ type SongService interface {
 	AddSong(context.Context, models.SongRequest, []byte) (int, error)
 	UpdateSong(context.Context, models.SongUpdate) error
 	GetSong(context.Context, models.VerseRequest) (models.VerseResponce, error)
+	GetAllSongs(context.Context, models.RequestSongsFilter) ([]models.ResponceSongs, error)
 	DeleteSong(context.Context, int) error
 }
 
@@ -43,9 +44,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		songs.POST("/add", h.addSong)
 		songs.PUT("/update", h.updateSong)
-		songs.GET("/get_song", h.getSong)
+		songs.GET("/get_one", h.getSong)
+		songs.GET("/get_all", h.getAllSongs)
 		songs.DELETE("/delete/:id", h.deleteSong)
-		// auth.GET("/statistic", h.getStatistic)
 	}
 
 	return router

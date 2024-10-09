@@ -97,6 +97,13 @@ func (p *Postgres) GetSong(ctx context.Context, verseDBModel models.VerseDBModel
 	return verseDBModel, nil
 }
 
+func (p *Postgres) GetAllSongs(ctx context.Context, requestSongs models.RequestSongsDBModel) ([]models.ResponceSongsDBModel, error) {
+
+	
+
+	return nil, nil
+}
+
 func (p *Postgres) DeleteSongFromRepository(ctx context.Context, id int) error {
 
 	deleteQuery := fmt.Sprintf("DELETE FROM %s WHERE id = $1", songs_table)

@@ -21,7 +21,7 @@ func (s *ApplicationServices) AddSong(ctx context.Context, songRequest models.So
 	groupDBModel := models.NewGroupDBModel(songRequest.Group, nil)
 	songModel := models.NewSongDBModel(songRequest.Song, songDetail)
 
-	id, err := s.repository.AddSongToRepository(ctx, *groupDBModel, *songModel)
+	id, err := s.repository.AddSongToRepository(ctx, groupDBModel, songModel)
 	if err != nil {
 		s.log.WithError(err).Error("failed to add song to repository")
 		return 0, err
@@ -42,7 +42,7 @@ func (s *ApplicationServices) UpdateSong(ctx context.Context, updateSong models.
 
 	songModel := models.NewSongDBModel(updateSong.Name, updateSong)
 
-	err := s.repository.UpdateSongToRepository(ctx, *songModel)
+	err := s.repository.UpdateSongToRepository(ctx, songModel)
 	if err != nil {
 		s.log.WithError(err).Error("failed to update song in repository")
 		return err
@@ -53,7 +53,7 @@ func (s *ApplicationServices) UpdateSong(ctx context.Context, updateSong models.
 func (s *ApplicationServices) GetSong(ctx context.Context, request models.VerseRequest) (models.VerseResponce, error) {
 
 	verseDBModel := models.NewVerseDBModel(request)
-	responceFromDB, err := s.repository.GetSong(ctx, *verseDBModel)
+	responceFromDB, err := s.repository.GetSong(ctx, verseDBModel)
 	if err != nil {
 		s.log.WithError(err).Error("failed to get song from repository")
 		return models.VerseResponce{}, err
@@ -70,7 +70,7 @@ func (s *ApplicationServices) GetSong(ctx context.Context, request models.VerseR
 
 	if lenSliceVerses == zero {
 		return models.VerseResponce{}, fmt.Errorf("the requested song does not have any verses")
-	} else if lenSliceVerses > int(request.RequestedVerse + one) {
+	} else if lenSliceVerses > int(request.RequestedVerse+one) {
 		nextVesre = request.RequestedVerse + one
 	} else if lenSliceVerses == int(request.RequestedVerse) {
 		nextVesre = zero
@@ -78,10 +78,29 @@ func (s *ApplicationServices) GetSong(ctx context.Context, request models.VerseR
 
 	responce := models.VerseResponce{
 		NextVerse: nextVesre,
-		Text:      sliceVerses[request.RequestedVerse - one],
+		Text:      sliceVerses[request.RequestedVerse-one],
 	}
 
 	return responce, nil
+}
+
+func (s *ApplicationServices) GetAllSongs(ctx context.Context, requestSongFilter models.RequestSongsFilter) ([]models.ResponceSongs, error) {
+
+	songsFilterDBModel := models.NewSongsFilterDBModel(requestSongFilter)
+
+	sliceSongs, err := s.repository.GetAllSongs(ctx, songsFilterDBModel)
+	if err != nil {
+		s.log.WithError(err).Error("failed to get all songs from repository")
+		return nil, err
+	}
+
+	responceSlices := make([]models.ResponceSongs, 0)
+
+	for _, sl := range sliceSongs {
+		responceSlices = append(responceSlices, models.NewResponceSongs(sl))
+	}
+
+	return responceSlices, nil
 }
 
 func (s *ApplicationServices) DeleteSong(ctx context.Context, id int) error {

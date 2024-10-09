@@ -104,6 +104,30 @@ func (h *Handler) getSong(c *gin.Context) {
 	c.JSON(http.StatusOK, verse)
 }
 
+func (h *Handler) getAllSongs(c *gin.Context) {
+
+	limit := c.Query("limit")
+	offset := c.Query("offset")
+	group := c.Query("group")
+	song := c.Query("song")
+
+	requestSongFilter, err := validateQuerysFilter(limit, offset, group, song)
+	if err != nil {
+		h.log.Error("failed to validate params: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid request"})
+		return
+	}
+
+	ctx := c.Request.Context()
+	sliceResponceSongs, err := h.service.GetAllSongs(ctx, *requestSongFilter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to get songs"})
+		return
+	}
+
+	c.JSON(http.StatusOK, sliceResponceSongs)
+}
+
 func (h *Handler) deleteSong(c *gin.Context) {
 
 	ctx := c.Request.Context()
@@ -123,6 +147,26 @@ func (h *Handler) deleteSong(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"successful deletion of id ": id})
+}
+
+func validateQuerysFilter(params ...string) (*models.RequestSongsFilter, error) {
+
+	limit, err := strconv.Atoi(params[0])
+	if err != nil {
+		return nil, err
+	}
+	offset, err := strconv.Atoi(params[1])
+	if err != nil {
+		return nil, err
+	}
+
+	requestSongFilter := models.NewRequestSongFilter(int64(limit), int64(offset), params[2], params[3])
+
+	var validate = validator.New()
+	if err := validate.Struct(requestSongFilter); err != nil {
+		return nil, err
+	}
+	return &requestSongFilter, nil
 }
 
 func bindAndValidateRequest(body []byte, model interface{}) error {
