@@ -52,3 +52,13 @@ func (su SongUpdate) ReleaseDate() string {
 func (su SongUpdate) Reference() string {
 	return su.Link
 }
+
+type VerseRequest struct {
+	ID             int64 `json:"id" validate:"required"`
+	RequestedVerse int64 `json:"requestedVerse"`
+}
+
+type VerseResponce struct {
+	NextVerse int64  `json:"nextVerse"`
+	Text      string `json:"text"`
+}

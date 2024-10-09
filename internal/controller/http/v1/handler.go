@@ -16,8 +16,9 @@ const (
 
 type SongService interface {
 	AddSong(context.Context, models.SongRequest, []byte) (int, error)
-	DeleteSong(context.Context, int) error
 	UpdateSong(context.Context, models.SongUpdate) error
+	GetSong(context.Context, models.VerseRequest) (models.VerseResponce, error)
+	DeleteSong(context.Context, int) error
 }
 
 type Handler struct {
@@ -42,7 +43,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		songs.POST("/add", h.addSong)
 		songs.PUT("/update", h.updateSong)
-		// auth.GET("/get/:id", h.getClient)
+		songs.GET("/get_song", h.getSong)
 		songs.DELETE("/delete/:id", h.deleteSong)
 		// auth.GET("/statistic", h.getStatistic)
 	}

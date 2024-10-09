@@ -7,9 +7,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	zero = iota
+	one
+)
+
 type SongsRepo interface {
 	AddSongToRepository(context.Context, models.GroupDBModel, models.SongDBModel) (int, error)
 	UpdateSongToRepository(context.Context, models.SongDBModel) error
+	GetSong(context.Context, models.VerseDBModel) (models.VerseDBModel, error)
 	DeleteSongFromRepository(context.Context, int) error
 }
 

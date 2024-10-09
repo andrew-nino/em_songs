@@ -29,3 +29,19 @@ func NewSongDBModel(name string, mod modelsHTTP) *SongDBModel {
 		Link:       mod.Reference(),
 	}
 }
+
+type VerseDBModel struct {
+	ID           int64  `db:"id"`
+	NumberVerse  int64  // for Redis
+	AmountVerses int64  // for Redis
+	Text         string `db:"text"`
+}
+
+func NewVerseDBModel(req VerseRequest) *VerseDBModel {
+	return &VerseDBModel{
+		ID:           req.ID,
+		NumberVerse:  req.RequestedVerse,
+		AmountVerses: 0,
+		Text:         "",
+	}
+}
