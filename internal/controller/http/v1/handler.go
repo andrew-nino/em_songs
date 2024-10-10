@@ -18,7 +18,7 @@ type SongService interface {
 	AddSong(context.Context, models.SongRequest, []byte) (int, error)
 	UpdateSong(context.Context, models.SongUpdate) error
 	GetSong(context.Context, models.VerseRequest) (models.VerseResponce, error)
-	GetAllSongs(context.Context, models.RequestSongsFilter) ([]models.ResponceSongs, error)
+	GetAllSongs(context.Context, models.RequestSongsFilter) (*models.ResponceSongs, error)
 	DeleteSong(context.Context, int) error
 }
 

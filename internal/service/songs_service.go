@@ -40,8 +40,7 @@ func processRawAnswer(songDetail *models.SongDetail, body []byte) error {
 
 func (s *ApplicationServices) UpdateSong(ctx context.Context, updateSong models.SongUpdate) error {
 
-	songModel := models.NewSongDBModel(updateSong.Name, updateSong)
-
+	songModel := models.NewSongDBModel(updateSong.Song, updateSong)
 	err := s.repository.UpdateSongToRepository(ctx, songModel)
 	if err != nil {
 		s.log.WithError(err).Error("failed to update song in repository")
@@ -84,23 +83,17 @@ func (s *ApplicationServices) GetSong(ctx context.Context, request models.VerseR
 	return responce, nil
 }
 
-func (s *ApplicationServices) GetAllSongs(ctx context.Context, requestSongFilter models.RequestSongsFilter) ([]models.ResponceSongs, error) {
+func (s *ApplicationServices) GetAllSongs(ctx context.Context, requestSongFilter models.RequestSongsFilter) (*models.ResponceSongs, error) {
 
 	songsFilterDBModel := models.NewSongsFilterDBModel(requestSongFilter)
 
 	sliceSongs, err := s.repository.GetAllSongs(ctx, songsFilterDBModel)
-	if err != nil {
+	if err != nil || len(sliceSongs) == 0 || sliceSongs == nil {
 		s.log.WithError(err).Error("failed to get all songs from repository")
 		return nil, err
 	}
 
-	responceSlices := make([]models.ResponceSongs, 0)
-
-	for _, sl := range sliceSongs {
-		responceSlices = append(responceSlices, models.NewResponceSongs(sl))
-	}
-
-	return responceSlices, nil
+	return models.NewResponceSongs(sliceSongs), nil
 }
 
 func (s *ApplicationServices) DeleteSong(ctx context.Context, id int) error {

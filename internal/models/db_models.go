@@ -1,29 +1,29 @@
 package models
 
 type GroupDBModel struct {
-	Name    string   `db:"name"`
+	Group   string   `db:"group_name"`
 	Members []string `db:"members"`
 }
 
-func NewGroupDBModel(name string, members []string) GroupDBModel {
+func NewGroupDBModel(group string, members []string) GroupDBModel {
 	return GroupDBModel{
-		Name:    name,
+		Group:   group,
 		Members: members,
 	}
 }
 
 type SongDBModel struct {
 	ID         int64  `db:"id"`
-	Name       string `db:"name"`
+	Song       string `db:"song"`
 	Text       string `db:"text"`
 	ReleasedAt string `db:"released_at"`
 	Link       string `db:"link"`
 }
 
-func NewSongDBModel(name string, mod modelsHTTP) SongDBModel {
+func NewSongDBModel(song string, mod modelsHTTP) SongDBModel {
 	return SongDBModel{
 		ID:         mod.ID(),
-		Name:       name,
+		Song:       song,
 		Text:       mod.Text(),
 		ReleasedAt: mod.ReleaseDate(),
 		Link:       mod.Reference(),
@@ -49,7 +49,7 @@ func NewVerseDBModel(req VerseRequest) VerseDBModel {
 type RequestSongsDBModel struct {
 	Limit  int64  `db:"limit"`
 	Offset int64  `db:"offset"`
-	Group  string `db:"group"`
+	Group  string `db:"group_name"`
 	Song   string `db:"song"`
 }
 
@@ -65,7 +65,8 @@ func NewSongsFilterDBModel(req RequestSongsFilter) RequestSongsDBModel {
 type ResponceSongsDBModel struct {
 	ID          int64  `db:"id"`
 	Song        string `db:"song"`
-	Group       string `json:"group"`
-	ReleaseDate string `json:"releaseDate"`
-	Offset      int64  `json:"offset"`
+	Group       string `db:"group_name"`
+	ReleaseDate string `db:"released_at"`
+	Link        string `db:"link"`
+	Offset      int64  `db:"offset"`
 }

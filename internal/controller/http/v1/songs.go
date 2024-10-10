@@ -120,12 +120,12 @@ func (h *Handler) getAllSongs(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	sliceResponceSongs, err := h.service.GetAllSongs(ctx, *requestSongFilter)
-	if err != nil {
+	if err != nil || sliceResponceSongs == nil{
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to get songs"})
 		return
 	}
 
-	c.JSON(http.StatusOK, sliceResponceSongs)
+	c.JSON(http.StatusOK, *sliceResponceSongs)
 }
 
 func (h *Handler) deleteSong(c *gin.Context) {
