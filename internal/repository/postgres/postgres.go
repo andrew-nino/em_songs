@@ -66,7 +66,7 @@ func NewPostgresDB(cfg config.PG) (*sqlx.DB, error) {
 		if err == nil {
 			break
 		}
-		log.Printf("Postgres is trying to connect, attempts left: %d", cfg.ConnAttempts)
+		log.Printf("Postgres is trying to connect, attempts left: %d\n", cfg.ConnAttempts)
 		time.Sleep(cfg.ConnTimeout)
 		cfg.ConnAttempts--
 	}

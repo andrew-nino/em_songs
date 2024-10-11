@@ -11,11 +11,13 @@ import (
 	"github.com/andrew-nino/em_songs/config"
 	"github.com/andrew-nino/em_songs/internal/models"
 	"github.com/go-playground/validator"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) addSong(c *gin.Context) {
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "addSong"}).Infof("entry: IP %+v", c.RemoteIP())
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -44,11 +46,13 @@ func (h *Handler) addSong(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to add song"})
 		return
 	}
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "addSong"}).Infof("success: IP %+v", c.RemoteIP())
 
 	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 func (h *Handler) updateSong(c *gin.Context) {
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "updateSong"}).Infof("entry: IP %+v", c.RemoteIP())
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -70,11 +74,13 @@ func (h *Handler) updateSong(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to update song"})
 		return
 	}
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "updateSong"}).Infof("success: IP %+v", c.RemoteIP())
 
 	c.JSON(http.StatusOK, gin.H{"successful update song id": updateSongModel.SongID})
 }
 
 func (h *Handler) getSong(c *gin.Context) {
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "getSong"}).Infof("entry: IP %+v", c.RemoteIP())
 
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -100,11 +106,13 @@ func (h *Handler) getSong(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to getting verse"})
 		return
 	}
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "getSong"}).Infof("success: IP %+v", c.RemoteIP())
 
 	c.JSON(http.StatusOK, verse)
 }
 
 func (h *Handler) getAllSongs(c *gin.Context) {
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "getAllSongs"}).Infof("entry: IP %+v", c.RemoteIP())
 
 	limit := c.Query("limit")
 	offset := c.Query("offset")
@@ -120,15 +128,17 @@ func (h *Handler) getAllSongs(c *gin.Context) {
 
 	ctx := c.Request.Context()
 	sliceResponceSongs, err := h.service.GetAllSongs(ctx, *requestSongFilter)
-	if err != nil || sliceResponceSongs == nil{
+	if err != nil || sliceResponceSongs == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to get songs"})
 		return
 	}
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "getAllSongs"}).Infof("success: IP %+v", c.RemoteIP())
 
 	c.JSON(http.StatusOK, *sliceResponceSongs)
 }
 
 func (h *Handler) deleteSong(c *gin.Context) {
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "deleteSong"}).Infof("entry: IP %+v", c.RemoteIP())
 
 	ctx := c.Request.Context()
 	idStr := c.Param("id")
@@ -145,6 +155,7 @@ func (h *Handler) deleteSong(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to delete song"})
 		return
 	}
+	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "deleteSong"}).Infof("success: IP %+v", c.RemoteIP())
 
 	c.JSON(http.StatusOK, gin.H{"successful deletion of id ": id})
 }

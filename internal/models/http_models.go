@@ -109,7 +109,7 @@ func NewResponceSongs(resp []ResponceSongsDBModel) *ResponceSongs {
 	}
 
 	responce := &ResponceSongs{
-		Offset:           responceSong[len(responceSong)-1].ID,
+		Offset:           responceSong[len(responceSong)-1].ID + 1,
 		SongsAfterFilter: responceSong,
 	}
 

@@ -40,7 +40,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	router := gin.New()
 
-	songs := router.Group("/songs")
+	songs := router.Group("/songs/v1")
 	{
 		songs.POST("/add", h.addSong)
 		songs.PUT("/update", h.updateSong)
