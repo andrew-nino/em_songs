@@ -55,7 +55,7 @@ func (su SongUpdate) Reference() string {
 
 type VerseRequest struct {
 	ID             int64 `json:"id" validate:"required"`
-	RequestedVerse int64 `json:"requestedVerse"`
+	RequestedVerse int64 `json:"requestedVerse" validate:"required"`
 }
 
 type VerseResponce struct {
@@ -102,7 +102,7 @@ func NewSongsAfterFilter(resp ResponceSongsDBModel) SongsAfterFilter {
 
 func NewResponceSongs(resp []ResponceSongsDBModel) *ResponceSongs {
 
-	responceSong := make([]SongsAfterFilter,0)
+	responceSong := make([]SongsAfterFilter, 0)
 
 	for _, r := range resp {
 		responceSong = append(responceSong, NewSongsAfterFilter(r))

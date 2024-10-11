@@ -18,7 +18,7 @@ type Server struct {
 	port       string
 }
 
-func New(log *logrus.Logger, port string, services *service.ApplicationServices, cfg config.HTTP) *Server {
+func New(log *logrus.Logger, port string, services *service.ApplicationServices, cfg *config.Config) *Server {
 
 	handler := v1.NewHandler(log, services, cfg)
 

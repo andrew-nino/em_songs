@@ -34,7 +34,7 @@ func (h *Handler) addSong(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	rawAnswer, err := getSongFromExternal(ctx, h.configHTTP, requestModel)
+	rawAnswer, err := getSongFromExternal(ctx, h.config.HTTP, requestModel)
 	if err != nil {
 		h.log.Error("failed to get song from external service: ", err)
 		c.JSON(http.StatusFailedDependency, gin.H{"message": "failed to get song"})
@@ -82,14 +82,10 @@ func (h *Handler) updateSong(c *gin.Context) {
 func (h *Handler) getSong(c *gin.Context) {
 	h.log.WithFields(logrus.Fields{"layer": "handler", "op": "getSong"}).Infof("entry: IP %+v", c.RemoteIP())
 
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		h.log.Error("Error reading request body")
-		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid request"})
-	}
+	id := c.Query("id")
+	requestedVerse := c.Query("requestedVerse")
 
-	getVerseModel := models.VerseRequest{}
-	err = bindAndValidateRequest(body, &getVerseModel)
+	getVerseModel, err := validatingGetSong(id, requestedVerse)
 	if err != nil {
 		h.log.Error("failed to bind JSON: ", err)
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid request"})
@@ -97,7 +93,7 @@ func (h *Handler) getSong(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	verse, err := h.service.GetSong(ctx, getVerseModel)
+	verse, err := h.service.GetSong(ctx, *getVerseModel)
 	if err != nil {
 		if errors.Is(err, ErrNoSongFound) {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "failed to getting verse"})
@@ -119,7 +115,7 @@ func (h *Handler) getAllSongs(c *gin.Context) {
 	group := c.Query("group")
 	song := c.Query("song")
 
-	requestSongFilter, err := validateQuerysFilter(limit, offset, group, song)
+	requestSongFilter, err := validatingQuerysFilter(limit, offset, group, song)
 	if err != nil {
 		h.log.Error("failed to validate params: ", err)
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid request"})
@@ -160,7 +156,30 @@ func (h *Handler) deleteSong(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"successful deletion of id ": id})
 }
 
-func validateQuerysFilter(params ...string) (*models.RequestSongsFilter, error) {
+func validatingGetSong(id, requestedVerse string) (*models.VerseRequest, error) {
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, err
+	}
+	vesreInt, err := strconv.Atoi(requestedVerse)
+	if err != nil {
+		return nil, err
+	}
+
+	getVerseModel := &models.VerseRequest{
+		ID:             int64(idInt),
+		RequestedVerse: int64(vesreInt),
+	}
+
+	var validate = validator.New()
+	if err := validate.Struct(getVerseModel); err != nil {
+		return nil, err
+	}
+	return getVerseModel, nil
+}
+
+func validatingQuerysFilter(params ...string) (*models.RequestSongsFilter, error) {
 
 	limit, err := strconv.Atoi(params[0])
 	if err != nil {

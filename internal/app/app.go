@@ -16,7 +16,7 @@ func NewApplication(log *logrus.Logger, port string, cfg *config.Config) *App {
 
 	repository := postgres.New(log, cfg.PG)
 	services := service.New(log, repository)
-	server := httpserver.New(log, port, services, cfg.HTTP)
+	server := httpserver.New(log, port, services, cfg)
 
 	return &App{
 		HTTPServer: server,

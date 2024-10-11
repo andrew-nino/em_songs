@@ -79,8 +79,8 @@ func (s *ApplicationServices) GetSong(ctx context.Context, request models.VerseR
 		return models.VerseResponce{}, fmt.Errorf("the requested song does not have any verses")
 	} else if lenSliceVerses > int(request.RequestedVerse+one) {
 		nextVesre = request.RequestedVerse + one
-	} else if lenSliceVerses == int(request.RequestedVerse) {
-		nextVesre = zero
+	} else {
+		nextVesre = one
 	}
 
 	responce := models.VerseResponce{

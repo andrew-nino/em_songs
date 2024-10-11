@@ -11,6 +11,7 @@ import (
 type (
 	Config struct {
 		App
+		Gin
 		HTTP
 		Log
 		PG
@@ -19,6 +20,12 @@ type (
 	App struct {
 		Name    string `env-required:"true" env:"APP_NAME"`
 		Version string `env-required:"true" env:"APP_VERSION"`
+	}
+
+	Gin struct {
+		Mode            string `env:"GIN_MODE" env-default:"debug"`
+		AllowAllOrigins bool   `env:"ALLOW_ALL_URLS" env-required:"true" env-default:"false"`
+		AllowUrls       string `env:"ALLOW_URLS" env-default:"http://localhost:8080"`
 	}
 
 	HTTP struct {

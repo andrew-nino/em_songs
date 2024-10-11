@@ -1,0 +1,318 @@
+openapi: 3.0.0
+info:
+  title: Effective Mobile API
+  description: API Server for test work
+  version: 1.0.0
+  contact:
+    name: "Andrew Muravev"
+    email: "andrey.muravey1@gmail.com"
+servers:
+  - url: http://localhost:8080/songs/v1
+paths:
+  /add:
+    post:
+      summary: Add a new song
+      description: Endpoint for adding a new song to the library
+      tags:
+        - songs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SongRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+  /update:
+    put:
+      summary: Update a song
+      description: Update an existing song with the provided data
+      tags:
+        - songs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SongUpdate'
+      responses:
+        '200':
+          description: Successful update
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  successful_update_song_id:
+                    type: integer
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Failed to update song
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /get_one:
+    get:
+      summary: Retrieve a song by ID
+      description: Get song by verses. Get a verse of a song by specifying the corresponding data in the request text.
+      tags:
+        - songs
+      operationId: getSong
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the song.
+        - name: requestedVerse
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The specific verse of the song that is requested.
+      responses:
+        '200':
+          description: Successful response containing the song data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerseResponse'
+        '400':
+          description: Invalid request due to bad input or no song found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "failed to getting verse"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "failed to getting verse"
+  /get_all:
+    get:
+      summary: Retrieve a list of songs
+      tags:
+        - songs
+      operationId: getAllSongs
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of songs to return
+          required: true
+          schema:
+            type: string  # Use appropriate type, e.g. integer
+        - name: offset
+          in: query
+          description: The offset for pagination
+          required: true
+          schema:
+            type: string  # Use appropriate type, e.g. integer
+        - name: group
+          in: query
+          description: Filter by song group
+          required: false
+          schema:
+            type: string
+        - name: song
+          in: query
+          description: Filter by song name. Search by case-insensitive pattern.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of songs retrieved successfully
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/ResponseSongs'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error while fetching songs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /delete/{id}:
+    delete:
+      summary: Delete a song by ID
+      tags:
+        - songs
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the song to delete
+      responses:
+        '200':
+          description: Successful deletion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "successful deletion of id 123"
+        '400':
+          description: Invalid ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "invalid id"
+        '500':
+          description: Failed to delete song
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "failed to delete song"
+components:
+  schemas:
+    SongRequest:
+      type: object
+      properties:
+        group:
+          type: string
+          description: The group associated with the song
+          maxLength: 100
+        song:
+          type: string
+          description: The name of the song
+          maxLength: 100
+      required:
+        - group
+        - song
+  
+    SongUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the song
+        song:
+          type: string
+          maxLength: 100
+          description: The name of the song
+        releaseDate:
+          type: string
+          format: date
+          description: The release date of the song
+        text:
+          type: string
+          description: The text of the song
+        link:
+          type: string
+          format: uri
+          description: The link associated with the song
+      required:
+        - songID
+
+    VerseResponse:
+      type: object
+      properties:
+        NextVerse:
+          type: integer
+          format: int64
+          description: Next verse number
+          example: 2
+        Text:
+          type: string
+          description: Text of the verse
+          example: "la-la-la"
+          
+    ResponseSongs:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+          description: The offset value for pagination
+        songsAfterFilter:
+          type: array
+          items:
+            $ref: "#/components/schemas/SongsAfterFilter"
+      required:
+        - offset
+        - songsAfterFilter
+      
+    SongsAfterFilter:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The unique identifier for the song
+          example: 2
+        songTitle:
+          type: string
+          description: The title of the song
+          example: Осень
+        groupName:
+          type: string
+          description: The name of the group or artist
+          example: ДДТ
+        releaseDate:
+          type: string
+          format: date
+          description: The release date of the song in YYYY-MM-DD format
+      required:
+        - id
+        - songTitle
+        - groupName
+        - releaseDate
