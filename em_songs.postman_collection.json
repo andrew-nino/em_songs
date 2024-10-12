@@ -1,0 +1,177 @@
+{
+	"info": {
+		"_postman_id": "5208d29f-66a8-4a5e-9468-67202bf0f196",
+		"name": "em_songs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24421732"
+	},
+	"item": [
+		{
+			"name": "add song",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n \"group\": \"DDT\",\n \"song\": \"Это всё, что останется после меня\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/songs/v1/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"songs",
+						"v1",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete song",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/songs/v1/delete/8",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"songs",
+						"v1",
+						"delete",
+						"8"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update song",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 6,\n    \"song\": \"Осень\",\n    \"releaseDate\": \"2020-01-02\",\n    \"text\": \"new text\",\n    \"link\": \"new link\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/songs/v1/update",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"songs",
+						"v1",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get one",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/songs/v1/get_one?id=3&requestedVerse=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"songs",
+						"v1",
+						"get_one"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3"
+						},
+						{
+							"key": "requestedVerse",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/songs/v1/get_all?group=DDT&song=Осе&limit=3&offset=9",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"songs",
+						"v1",
+						"get_all"
+					],
+					"query": [
+						{
+							"key": "group",
+							"value": "DDT"
+						},
+						{
+							"key": "song",
+							"value": "Осе"
+						},
+						{
+							"key": "limit",
+							"value": "3"
+						},
+						{
+							"key": "offset",
+							"value": "9"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

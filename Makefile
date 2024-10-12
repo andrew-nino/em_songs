@@ -1,7 +1,9 @@
-.PHONY: run
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
-run: 
-	go run cmd/songs/main.go cmd/songs/logger.go -path_to_config .env
+.PHONY: build up start down destroy stop restart logs logs-app ps login-redis login-app db-psql
+
+help:
+	make -pRrq  -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 build:
 	docker compose  build $(c)
