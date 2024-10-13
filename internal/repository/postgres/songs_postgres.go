@@ -70,7 +70,11 @@ func (p *Postgres) UpdateSongToRepository(ctx context.Context, songUpdate models
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	insertSongQuery := fmt.Sprintf("UPDATE %s SET song=$1, text=$2, released_at=$3, link=$4, updated_at=now() WHERE id = $5 RETURNING id", songs_table)
+	insertSongQuery := fmt.Sprintf(`UPDATE %s SET song=CASE WHEN $1 <> '' THEN $1 ELSE song END, 
+												  text=CASE WHEN $2 <> '' THEN $2 ELSE text  END,
+										   released_at=CASE WHEN $3 <> '' THEN $3 ELSE released_at  END,
+												  link=CASE WHEN $4 <> '' THEN $4 ELSE link  END, 
+											updated_at=now() WHERE id = $5 RETURNING id`, songs_table)
 	rowSong := tx.QueryRowContext(ctx, insertSongQuery, songUpdate.Song, songUpdate.Text, songUpdate.ReleasedAt, songUpdate.Link, songUpdate.ID)
 	if err = rowSong.Scan(&id_song); err != nil && id_song != songUpdate.ID {
 		tx.Rollback()

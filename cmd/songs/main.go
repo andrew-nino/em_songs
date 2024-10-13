@@ -20,7 +20,7 @@ func main() {
 
 	go application.HTTPServer.MustRun()
 
-	log.Print("App " + cfg.App.Name + " version: " + cfg.App.Version + " started")
+	log.Print("App " + cfg.App.Name + " version: " + cfg.App.Version + " started on port: " + cfg.HTTP.Port)
 
 	// Waiting signal
 	quit := make(chan os.Signal, 1)
